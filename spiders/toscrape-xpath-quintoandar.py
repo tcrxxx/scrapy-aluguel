@@ -45,10 +45,25 @@ class ToScrapeSpiderXPath(scrapy.Spider):
             return
         
         for houses in response.xpath('//*[@id="__next"]/div/div/main/section[2]'):
-            yield {
-                'text': quote.xpath('./span[@class="text"]/text()').extract_first(),
-                'author': quote.xpath('.//small[@class="author"]/text()').extract_first(),
-                'tags': quote.xpath('.//div[@class="tags"]/a[@class="tag"]/text()').extract()
-            }
+                
+                size_bed_rest_room = houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()
+                size_bed_rest_room = [i.lower().split('\u00b7 ') for i in size_bed_rest_room]
+                print(size_bed_rest_room)
+
+                yield {
+                    # 'link': houses.xpath('./div/div[2]/div/div/a/@href').extract_first(),
+                    'link': houses.xpath('./div/div[2]/div/div/a/@href').extract(),
+                    'endereco' : houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h2/text()').extract(),
+                    'tamanho' : size_bed_rest_room[1],
+                    'quartos' : size_bed_rest_room[2],
+                    # 'banheiros' : value_restrooms_imovel,
+                    # 'garagem' : size_bed_rest_room[3],
+                    'valorAluguel' : houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[2]/h3/text()').extract(),
+                    # 'valorTaxas' : value_tax_imovel,
+                    'valorTotal' : houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[1]/h3/text()').extract()
+                }
                         
- 
+        # next_page -> //*[@id="__next"]/div/div/main/section[2]/div/div[26]/button
+        # xpath = "//a[@role='button']" 
+        # xpaths = driver.find_elements_by_xpath(xpath)
+        # xpaths[2].click()
