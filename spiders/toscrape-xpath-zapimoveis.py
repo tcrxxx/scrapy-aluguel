@@ -2,6 +2,7 @@
 import scrapy
 from scrapy import Request
 from scrapy import crawler
+from settings import translate_from_dict, getNumericValues
 
 
 class ToScrapeSpiderXPath(scrapy.Spider):
@@ -52,13 +53,13 @@ class ToScrapeSpiderXPath(scrapy.Spider):
                 yield {
                     'link': value_url_imovel,
                     'endereco' : value_street_imovel,
-                    'tamanho' : value_size_imovel,
+                    'tamanho' : translate_from_dict(value_size_imovel),
                     'quartos' : value_bedrooms_imovel,
                     'banheiros' : value_restrooms_imovel,
                     'garagem' : value_garage_imovel,
-                    'valorAluguel' : value_rentprice_imovel,
+                    'valorAluguel' : translate_from_dict(value_rentprice_imovel),
                     'valorTaxas' : value_tax_imovel,
-                    'valorTotal' : ''
+                    'valorTotal' : (sum(getNumericValues(value_tax_imovel)) + int(translate_from_dict(value_rentprice_imovel)))
                 }
             
         self.page_count += 1 

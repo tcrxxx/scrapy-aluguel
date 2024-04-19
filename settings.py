@@ -113,3 +113,12 @@ translateTable = {
     'R$' : '',
     '.' : ''
 }
+
+def translate_from_dict(original_text):
+    out = original_text
+    for key, value in translateTable.items():
+        out = out.replace(key,value)
+    return out
+
+def getNumericValues(stringWithNumbers):
+    return [int(s) for s in stringWithNumbers.split() if s.isdigit()]

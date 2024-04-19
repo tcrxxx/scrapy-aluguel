@@ -2,13 +2,7 @@
 import scrapy
 from scrapy import Request
 from scrapy import crawler
-from settings import translateTable
-
-def translate_from_dict(original_text):
-    out = original_text
-    for key, value in translateTable.items():
-        out = out.replace(key,value)
-    return out
+from settings import translate_from_dict
 
 class ToScrapeSpiderXPath(scrapy.Spider):
     name = 'toscrape-xpath'
