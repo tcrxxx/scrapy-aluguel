@@ -2,6 +2,7 @@
 import scrapy
 from scrapy import Request
 from scrapy import crawler
+from functools import reduce 
 
 
 class ToScrapeSpiderXPath(scrapy.Spider):
@@ -46,22 +47,28 @@ class ToScrapeSpiderXPath(scrapy.Spider):
         
         for houses in response.xpath('//*[@id="__next"]/div/div/main/section[2]'):
                 
-                size_bed_rest_room = houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()
-                size_bed_rest_room = [i.lower().split('\u00b7 ') for i in size_bed_rest_room]
-                print(size_bed_rest_room)
+                links = houses.xpath('./div/div[2]/div/div/a/@href').extract()
+                garages = [i.lower().split('\u00b7 ') for i in houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()]
+                addresses = houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h2/text()').extract()
+                sizes = garages[0]
+                bedrooms = garages[1]
+                garage = garages[2]
+                rentValues = houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[2]/h3/text()').extract()
+                totalValues = houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[1]/h3/text()').extract()
 
-                yield {
-                    # 'link': houses.xpath('./div/div[2]/div/div/a/@href').extract_first(),
-                    'link': houses.xpath('./div/div[2]/div/div/a/@href').extract(),
-                    'endereco' : houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h2/text()').extract(),
-                    'tamanho' : size_bed_rest_room[1],
-                    'quartos' : size_bed_rest_room[2],
-                    # 'banheiros' : value_restrooms_imovel,
-                    # 'garagem' : size_bed_rest_room[3],
-                    'valorAluguel' : houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[2]/h3/text()').extract(),
-                    # 'valorTaxas' : value_tax_imovel,
-                    'valorTotal' : houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[1]/h3/text()').extract()
-                }
+                for i in range(len(links)):
+                    yield {
+                        # 'link': houses.xpath('./div/div[2]/div/div/a/@href').extract_first(),
+                        'link': links[i],
+                        'endereco' : addresses[i],
+                        'tamanho' : sizes[i],
+                        'quartos' : bedrooms[i],
+                        # 'banheiros' : value_restrooms_imovel,
+                        'garagem' : garage[i],
+                        'valorAluguel' : rentValues[i],
+                        # 'valorTaxas' : value_tax_imovel,
+                        'valorTotal' : totalValues[i]
+                    }
                         
         # next_page -> //*[@id="__next"]/div/div/main/section[2]/div/div[26]/button
         # xpath = "//a[@role='button']" 
