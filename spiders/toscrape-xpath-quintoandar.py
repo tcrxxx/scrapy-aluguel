@@ -2,8 +2,13 @@
 import scrapy
 from scrapy import Request
 from scrapy import crawler
-from functools import reduce 
+from settings import translateTable
 
+def translate_from_dict(original_text):
+    out = original_text
+    for key, value in translateTable.items():
+        out = out.replace(key,value)
+    return out
 
 class ToScrapeSpiderXPath(scrapy.Spider):
     name = 'toscrape-xpath'
@@ -34,7 +39,6 @@ class ToScrapeSpiderXPath(scrapy.Spider):
             url = url.replace('PAGE_VARIABLE',str(first_page))
             yield Request(url=url, callback=self.parse)
 
-
     def parse(self, response):
 
         # get response status
@@ -46,7 +50,6 @@ class ToScrapeSpiderXPath(scrapy.Spider):
             return
         
         for houses in response.xpath('//*[@id="__next"]/div/div/main/section[2]'):
-                
                 links = houses.xpath('./div/div[2]/div/div/a/@href').extract()
                 addresses = houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h2/text()').extract()
                 numeric_datas = [i.lower().split('\u00b7 ') for i in houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()]
@@ -61,13 +64,13 @@ class ToScrapeSpiderXPath(scrapy.Spider):
                         # 'link': houses.xpath('./div/div[2]/div/div/a/@href').extract_first(),
                         'link': links[i],
                         'endereco' : addresses[i],
-                        'tamanho' : numeric_datas[i][0],
-                        'quartos' : numeric_datas[i][1],
+                        'tamanho' : translate_from_dict(numeric_datas[i][0]),
+                        'quartos' : translate_from_dict(numeric_datas[i][1]),
                         'banheiros' : '',
-                        'garagem' : numeric_datas[i][2],
-                        'valorAluguel' : rentValues[i],
+                        'garagem' : translate_from_dict(numeric_datas[i][2]),
+                        'valorAluguel' : translate_from_dict(rentValues[i]),
                         'valorTaxas' : '',
-                        'valorTotal' : totalValues[i]
+                        'valorTotal' : translate_from_dict(totalValues[i])
                     }
                         
         # next_page -> //*[@id="__next"]/div/div/main/section[2]/div/div[26]/button
