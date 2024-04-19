@@ -57,7 +57,8 @@ class ToScrapeSpiderXPath(scrapy.Spider):
                     'banheiros' : value_restrooms_imovel,
                     'garagem' : value_garage_imovel,
                     'valorAluguel' : value_rentprice_imovel,
-                    'valorTaxas' : value_tax_imovel
+                    'valorTaxas' : value_tax_imovel,
+                    'valorTotal' : ''
                 }
             
         self.page_count += 1 

@@ -48,11 +48,11 @@ class ToScrapeSpiderXPath(scrapy.Spider):
         for houses in response.xpath('//*[@id="__next"]/div/div/main/section[2]'):
                 
                 links = houses.xpath('./div/div[2]/div/div/a/@href').extract()
-                garages = [i.lower().split('\u00b7 ') for i in houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()]
                 addresses = houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h2/text()').extract()
-                sizes = garages[0]
-                bedrooms = garages[1]
-                garage = garages[2]
+                numeric_datas = [i.lower().split('\u00b7 ') for i in houses.xpath('./div/div[2]/div/div/a/div/div/div[3]/div/h3/text()').extract()]
+                # sizes = garages[0]
+                # bedrooms = garages[1]
+                # garage = garages[2]
                 rentValues = houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[2]/h3/text()').extract()
                 totalValues = houses.xpath('./div/div[2]/div/div/a/div/div/div[2]/div/div[1]/div/div/span[1]/h3/text()').extract()
 
@@ -61,12 +61,12 @@ class ToScrapeSpiderXPath(scrapy.Spider):
                         # 'link': houses.xpath('./div/div[2]/div/div/a/@href').extract_first(),
                         'link': links[i],
                         'endereco' : addresses[i],
-                        'tamanho' : sizes[i],
-                        'quartos' : bedrooms[i],
-                        # 'banheiros' : value_restrooms_imovel,
-                        'garagem' : garage[i],
+                        'tamanho' : numeric_datas[i][0],
+                        'quartos' : numeric_datas[i][1],
+                        'banheiros' : '',
+                        'garagem' : numeric_datas[i][2],
                         'valorAluguel' : rentValues[i],
-                        # 'valorTaxas' : value_tax_imovel,
+                        'valorTaxas' : '',
                         'valorTotal' : totalValues[i]
                     }
                         
